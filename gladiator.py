@@ -1,21 +1,23 @@
 # gladiator
+
 import random
 
 # armor, speed, weapon reach, health, damage
 
+murmillo = [60, 20, 70, 25, 5]
 
-murmillo = [60, 20, 70, 30, 5]
+retiarius = [20, 50, 100, 15, 15]
 
-retiarius = [20, 50, 100, 20, 15]
-
-thraex = [40, 100, 20, 25, 10]
+thraex = [40, 100, 20, 20, 10]
 
 classes = [murmillo, retiarius, thraex]
 player = []
 opponent = []
-
-setup = True
+wins = 0
+deaths = 0
+setup_1 = True
 in_combat = False
+
 
 # functions
 
@@ -48,25 +50,34 @@ def defend():
 print("""Choose your class:
                 
                 1 - Murmillo
-                2- Retiarius
-                3- Thraex   
+                2 - Retiarius
+                3 - Thraex   
                                         Enter 'I' for info.
                                         """)
 
-while setup:
+while setup_1:
     class_choice = input("""Enter the number corresponding with your class choice.
     > """).lower()
     if class_choice == '1':
-        print('you have chosen murmillo')
+        print("""
+        You are the Murmillo, heavily armored, but slow.
+        """)
         player = murmillo
         break
     elif class_choice == '2':
-        print('you have chosen retiarius')
+        print("""
+        You are the Retiarius, your Net, Trident, and quick reflexes
+        make up for your lack of armor. 
+        """)
         player = retiarius
         break
     elif class_choice == '3':
-        print('you have chosen thraex')
+        print("""
+        You are the Thraex, lightning fast attacks and evasive maneuvers
+        are your greatest ally.
+        """)
         player = thraex
+        in_combat = True
         break
     elif class_choice == 'i':
         print("""Thraex: 
@@ -92,48 +103,138 @@ when in close range.
 """)
     else:
         print('Invalid Input')
-setup = False
-opponent = random.choice(classes)
-print('Your opponent will be...')
-if opponent == retiarius:
-    print('the retiarius')
-if opponent == murmillo:
-    print('the murmillo')
-if opponent == thraex:
-    print('the thraex')
-health = player[3]
-enemy_health = opponent[3]
-# is_ready = input("""are you ready? y/n """).lower()
-# if is_ready == 'y':
-#     in_combat = True
-# elif is_ready == 'n':
-#     print('take your time...')
-# else:
-#     print('invalid input')
-in_combat = True
-while in_combat:
-    print(f'*  Your health: {health_bar(health)}', end=str(abs(25 - health) * ' ' + ' * '))
-    print(f'Enemy Health: {health_bar(enemy_health)}', end=str(abs(25 - enemy_health) * ' ' + ' * '))
-    print(' ')
-    test = input('press f to fight ')
-    if test == 'f':
-        fight = attack(hit_chance(opponent[0], player[1], player[2]))
-        if fight:
-            print('you did damage')
-            enemy_health -= random.randint(1, player[4])
-        elif not fight:
-            print('you missed')
+alive = True
+setup_1 = False
+is_dead = False
+choose_class = False
+while alive:
+
+    print("Enter 'Y' to begin fight. ")
+    begin = input("> ").lower()
+    if begin == 'y':
+        choose_class = True
+    else:
+        print('Invalid Input')
+        choose_class = False
+        in_combat = False
+    while choose_class:
+        opponent = random.choice(classes)
+        print('Your opponent will be...', end=' ')
+        if opponent == retiarius:
+            print('The Retiarius')
+        if opponent == murmillo:
+            print('The Murmillo')
+        if opponent == thraex:
+            print('The Thraex')
+        choose_class = False
+        in_combat = True
+
+    while in_combat:
+        health = player[3]
+        enemy_health = opponent[3]
+        print(f'*  Your health: {health_bar(health)}', end=str(abs(25 - health) * ' ' + ' * '))
+        print(f'Enemy Health: {health_bar(enemy_health)}', end=str(abs(25 - enemy_health) * ' ' + ' * '))
+        print(' ')
+        print("Enter 'F' to attack.")
+        attack_enemy = input('> ').lower()
+        if attack_enemy == 'f':
+            fight = attack(hit_chance(opponent[0], player[1], player[2]))
+            if fight:
+                # murmillo
+                if opponent == classes[0]:
+                    print("""
+                    You manage to hit a weak spot in the Murmillo's armor!
+                    """)
+                # retiarius
+                elif opponent == classes[1]:
+                    print("""
+                    The Retiarius failed to dodge your attack!
+                    """)
+                # thraex
+                elif opponent == classes[2]:
+                    print("""
+                    The Thraex was too slow for you!
+                    """)
+                enemy_health -= random.randint(1, player[4])
+            elif not fight:
+                # murmillo
+                if opponent == classes[0]:
+                    print("""
+                    You failed to penetrate the Murmillo's armor!
+                    """)
+                # retiarius
+                elif opponent == classes[1]:
+                    print("""
+                    The Retiarius gracefully dodges your attack!
+                    """)
+                # thraex
+                elif opponent == classes[2]:
+                    print("""
+                    You miss the Thraex entirely!
+                    """)
+        elif attack_enemy != 'f':
+            print('Invalid Input.')
         enemy_fight = attack(hit_chance(player[0], opponent[1], opponent[2]))
         if enemy_fight:
-            print('enemy did damage')
+            # murmillo
+            if opponent == classes[0]:
+                print("""
+                    The Murmillo hits you with a crushing blow!
+                """)
+            # retiarius
+            elif opponent == classes[1]:
+                print("""
+                    The Retiarius tangles you in his net, and stabs you swiftly with his trident!
+                """)
+            # thraex
+            elif opponent == classes[2]:
+                print("""
+                    The Thraex's curved sword slices into your skin!
+                """)
             health -= random.randint(1, opponent[4])
             # print(f"Health: {health}")
         elif not enemy_fight:
-            print('you dodged the attack')
+            # murmillo
+            if opponent == classes[0]:
+                print("""
+                     The Murmillo failed to hit you!
+                 """)
+            # retiarius
+            elif opponent == classes[1]:
+                print("""
+                     The Retiarius attempts to tangle you in his net but fails!
+                     Not today fish boy!
+                 """)
+            # thraex
+            elif opponent == classes[2]:
+                print("""
+                     You manage to avoid the Thraex's attack!
+                 """)
         if enemy_health <= 0:
-            print('you won the fight!')
+            wins += 1
+            print('Victory is yours!')
             break
         elif health <= 0:
-            print('you lost the fight.')
-            break
-print('thank you for playing')
+            deaths += 1
+            print('Oh dear, you are dead!')
+            is_dead = True
+            in_combat = False
+            while is_dead:
+                print("""
+                    1 - Play again
+                    2 - Quit
+                    """)
+                play_again = input('> ')
+                if play_again == '1':
+                    is_dead = False
+                    in_combat = False
+                if play_again == '2':
+                    alive = False
+                    in_combat = False
+                    break
+        # if attack_enemy == 'd':
+        #     defend()
+
+print('Thank you for playing.')
+print(f"Kills: {wins}")
+print(f"Deaths: {deaths}")
